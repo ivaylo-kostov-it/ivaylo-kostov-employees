@@ -1,11 +1,10 @@
 import dotenv from 'dotenv';
+dotenv.config();
 import { useContainer } from 'routing-controllers';
 import Container from 'typedi';
 import { DataSource } from 'typeorm';
 import { createApp } from './app';
 import { dataSource } from './dataSource';
-
-dotenv.config();
 
 useContainer(Container);
 
