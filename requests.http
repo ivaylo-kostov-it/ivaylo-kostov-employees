@@ -1,0 +1,105 @@
+@serverHost=localhost
+@serverPort=3000
+@jwtToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJpYXQiOjE3NDM5NDU0ODgsImV4cCI6MTc0NDAzMTg4OH0.PUcujD7Nh55_QgABClvX3q8veXL1V02HAl4bei56n-s
+@fileUploadName=assignments-sample.csv
+
+
+### Login
+POST http://{{serverHost}}:{{serverPort}}/api/auth/login
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "password": "blackdeep"
+}
+
+
+### Fetch all employees
+GET http://{{serverHost}}:{{serverPort}}/api/employees
+Authorization: Bearer {{jwtToken}}
+
+
+### Fetch single employee
+GET http://{{serverHost}}:{{serverPort}}/api/employees/1433
+Authorization: Bearer {{jwtToken}}
+
+
+### Create employee `John`
+POST http://{{serverHost}}:{{serverPort}}/api/employees
+Content-Type: application/json
+
+{
+    "id": 143,
+    "name": "John"
+}
+
+
+### Delete employee `John`
+DELETE http://{{serverHost}}:{{serverPort}}/api/employees/143
+
+
+### Create employee `Brad`
+POST http://{{serverHost}}:{{serverPort}}/api/employees
+Content-Type: application/json
+
+{
+    "id": 218,
+    "name": "Brad"
+}
+
+
+### Create employee `Peter`
+POST http://{{serverHost}}:{{serverPort}}/api/employees
+Content-Type: application/json
+
+{
+    "id": 99,
+    "name": "Peter"
+}
+
+
+### Fetch all projects
+GET http://{{serverHost}}:{{serverPort}}/api/projects
+Authorization: Bearer {{jwtToken}}
+
+
+### Create project `Quantum Leap`
+POST http://{{serverHost}}:{{serverPort}}/api/projects
+Content-Type: application/json
+
+{
+    "id": 10,
+    "name": "Quantum Leap"
+}
+
+
+### Create project `Nova Origin`
+POST http://{{serverHost}}:{{serverPort}}/api/projects
+Content-Type: application/json
+
+{
+    "id": 12,
+    "name": "Nova Origin"
+}
+
+
+### Fetch all assignments
+GET http://{{serverHost}}:{{serverPort}}/api/assignments
+Authorization: Bearer {{jwtToken}}
+
+
+### Upload assignments
+POST http://{{serverHost}}:{{serverPort}}/api/assignments/upload
+Content-Type: multipart/form-data; boundary=Splitter
+
+--Splitter
+Content-Disposition: form-data; name="file"; filename="{{fileUploadName}}"
+Content-Type: text/csv
+
+< ./csv/{{fileUploadName}}
+--Splitter--
+
+
+### Get longest collaboration
+GET http://{{serverHost}}:{{serverPort}}/api/assignments/longest-collaboration
+Authorization: Bearer {{jwtToken}}
