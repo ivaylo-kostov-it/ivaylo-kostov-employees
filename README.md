@@ -14,15 +14,21 @@ This application identifies pairs of employees who have worked together on commo
 - PostgreSQL (v13+)
 - Docker and Docker Compose
 
-## Start the application locally.
+## Start the application.
 
 1. Clone the repository:
 ```bash
 git clone https://github.com/your-github-username/your-firstname-lastname-employees.git
 cd your-firstname-lastname-employees
 ```
+2. Create .env file:
+POSTGRES_HOST=your_postgres_host
+POSTGRES_PORT=your_postgres_port
+POSTGRES_USER=your_postgres_user
+POSTGRES_PASSWORD=your_postgres_password
+POSTGRES_DB=your_postgres_db
 
-2. Start the application using Docker Compose:
+3. Start the application services using Docker Compose:
 ```bash
 docker compose up
 ```
@@ -47,9 +53,9 @@ npm install
 npm run build
 ```
 
-4. Start the database using Docker Compose
+4. Start the database service using Docker Compose
 ```bash
-docker compose -f ./docker-compose.db.yaml up
+docker compose -f ./docker-compose.dev.yaml up
 ```
 
 5. Start the application:
@@ -57,7 +63,7 @@ docker compose -f ./docker-compose.db.yaml up
 npm start
 ```
 
-For development with auto-reload:
+6. For development with auto-reload:
 ```bash
 npm run dev
 ```
@@ -128,7 +134,7 @@ Authorization: Bearer your_jwt_token
 - `PUT /api/projects/:id` - Update project
 - `DELETE /api/projects/:id` - Delete project
 
-### Employee Pairs
+### Assignments
 - `GET /api/assignments/longest-collaboration` - Get the pair of employees who worked together the longest
 - `POST /api/assignments/upload` - Upload CSV file with employee assignment data
 

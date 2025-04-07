@@ -1,12 +1,15 @@
+import dotenv from 'dotenv';
 import { useContainer } from 'routing-controllers';
 import Container from 'typedi';
 import { DataSource } from 'typeorm';
 import { createApp } from './app';
 import { dataSource } from './dataSource';
 
+dotenv.config();
+
 useContainer(Container);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.SERVER_PORT || 3000;
 
 async function bootstrap() {
     dataSource

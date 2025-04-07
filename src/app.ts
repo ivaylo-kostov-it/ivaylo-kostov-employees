@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import * as express from 'express';
-import { createExpressServer, useContainer } from 'routing-controllers';
+import { createExpressServer } from 'routing-controllers';
 import { EmployeeController } from './controllers/EmployeeController';
 import { ProjectController } from './controllers/ProjectController';
 import { AssignmentController } from './controllers/AssignmentController';
