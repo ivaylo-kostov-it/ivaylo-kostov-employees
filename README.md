@@ -10,57 +10,95 @@ This application identifies pairs of employees who have worked together on commo
 - Dockerized environment
 
 ## Prerequisites
-- Node.js (v16+)
-- PostgreSQL (v13+)
-- Docker and Docker Compose
 
-## Start the application locally.
+Before you begin, ensure you have the following tools installed on your system:
 
-1. Clone the repository:
+- **Git:** For cloning the project repository.
+- **Docker & Docker Compose:** For managing application containers (database, app server, etc.)
+- **Node.js & npm:** Required only for local development.
+
+## Startup Instructions
+
+This guide provides instructions on how to run the project locally.
+
+---
+
+## Scenario 1: Quick Start with Docker Compose (Recommended)
+
+This scenario uses Docker Compose to build and run all necessary application components (including the database and the application itself) inside containers.
+
+1.  **Clone the Project:**
+Open your terminal or command prompt and run the following command:
 ```bash
-git clone https://github.com/your-github-username/your-firstname-lastname-employees.git
-cd your-firstname-lastname-employees
+git clone https://github.com/ivaylo-kostov-it/ivaylo-kostov-employees.git
 ```
 
-2. Start the application using Docker Compose:
+2.  **Navigate to the Project Directory:**
+Change into the newly created project folder:
 ```bash
-docker compose up
+cd ./ivaylo-kostov-employees
 ```
 
-The application will be available at http://localhost:3000.
-
-## Local development setup.
-
-1. Clone the repository:
+3.  **Start with Docker Compose:**
+Execute the following command. This will pull or build the required Docker images (if not already present) and start the containers in the background.
 ```bash
-git clone https://github.com/your-github-username/your-firstname-lastname-employees.git
-cd your-firstname-lastname-employees
+docker compose up -d
 ```
 
-2. Install dependencies:
+4.  **Access the Application:**
+Once the containers have started successfully, the application should be accessible at `http://localhost:<SERVER_PORT>` (check the project configuration file for the specific port number).
+
+5.  **Stop the Application:**
+When you want to stop all running containers related to the project, navigate to the project directory in your terminal and run:
+```bash
+docker compose down
+```
+
+---
+
+## Scenario 2: Manual Setup & Development Start
+
+This scenario involves manually installing dependencies, building the project, starting *only* development components using Docker Compose, and then running the application server locally using `npm`.
+
+1.  **Clone the Project:**
+Open your terminal or command prompt and run the following command:
+```bash
+git clone https://github.com/ivaylo-kostov-it/ivaylo-kostov-employees.git
+```
+
+2.  **Navigate to the Project Directory:**
+Change into the newly created project folder:
+```bash
+cd ./ivaylo-kostov-employees
+```
+
+3.  **Install Dependencies:**
+Install all the required Node.js packages defined in the `package.json` file:
 ```bash
 npm install
 ```
 
-3. Build the application:
+4.  **Start Development Components:**
+Start only the development components using Docker Compose.
 ```bash
-npm run build
+docker compose -f ./docker-compose.dev.yaml up -d
 ```
+    *(If your database service has a different name in `docker-compose.yml`, replace `db` with the correct service name)*
+    *Wait for the database container to start up.*
 
-4. Start the database using Docker Compose
-```bash
-docker compose -f ./docker-compose.db.yaml up
-```
-
-5. Start the application:
-```bash
-npm start
-```
-
-For development with auto-reload:
+6.  **Start the Application Server:**
+This starts the server in development mode and automatically restarts it when code changes are detected (hot reloading).
 ```bash
 npm run dev
 ```
+
+7.  **Stop the Services:**
+* To stop the **database container** started in step 5, navigate to the project directory and run:
+```bash
+docker compose down
+```
+* To stop the **application server** (started with `npm run dev`), go to the terminal window where it is running and press `Ctrl + C`.
+
 
 ## Authentication
 
@@ -128,7 +166,7 @@ Authorization: Bearer your_jwt_token
 - `PUT /api/projects/:id` - Update project
 - `DELETE /api/projects/:id` - Delete project
 
-### Employee Pairs
+### Assignments
 - `GET /api/assignments/longest-collaboration` - Get the pair of employees who worked together the longest
 - `POST /api/assignments/upload` - Upload CSV file with employee assignment data
 
