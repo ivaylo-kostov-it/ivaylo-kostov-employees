@@ -116,7 +116,7 @@ export class AssignmentService {
      * - The new assignment ends during an existing assignment
      * - The new assignment completely contains an existing assignment
      * - The new assignment is completely contained within an existing assignment
-     * @param assignment 
+     * @param assignment
      * @returns string | undefined
      */
     private async validateNoOverlap(assignment: Assignment) {
@@ -125,6 +125,7 @@ export class AssignmentService {
             employeeId: assignment.employeeId,
             projectId: assignment.projectId,
         };
+
         let overlappingAssignments: Assignment[] = [];
 
         // If the new assignment has an end date
@@ -132,17 +133,23 @@ export class AssignmentService {
             // Check for any assignments that overlap with this date range
             overlappingAssignments = await this.assignmentRepository.find({
                 where: [
-                    // Case 1: Existing assignment has end date and overlaps
+                    // Scenario: New assignment with end date overlaps with existing assignment that has an end date
+                    // Example: New(May 1 - Jun 30), Existing(Apr 15 - May 15) - Partial overlap at beginning
+                    // Example: New(May 1 - Jun 30), Existing(Jun 15 - Jul 15) - Partial overlap at end
+                    // Example: New(May 1 - Jun 30), Existing(Apr 15 - Jul 15) - Existing assignment contains new
+                    // Example: New(May 1 - Jun 30), Existing(May 15 - Jun 15) - New assignment contains existing
                     {
                         ...whereConditions,
-                        dateFrom: LessThanOrEqual(assignment.dateTo),
-                        dateTo: MoreThanOrEqual(assignment.dateFrom),
+                        dateFrom: LessThanOrEqual(assignment.dateTo),  // Existing assignment starts before or on the day new assignment ends
+                        dateTo: MoreThanOrEqual(assignment.dateFrom),  // Existing assignment ends after or on the day new assignment starts
                     },
-                    // Case 2: Existing assignment has no end date (ongoing) and started before new assignment ends
+
+                    // Scenario: New assignment with end date overlaps with ongoing assignment (no end date)
+                    // Example: New(May 1 - Jun 30), Existing(Apr 15 - null) - Ongoing assignment overlaps with new
                     {
                         ...whereConditions,
-                        dateFrom: LessThanOrEqual(assignment.dateTo),
-                        dateTo: IsNull(),
+                        dateFrom: LessThanOrEqual(assignment.dateTo),  // Existing assignment starts before or on the day new assignment ends
+                        dateTo: IsNull(),  // Existing assignment has no end date (ongoing)
                     }
                 ]
             });
@@ -151,20 +158,25 @@ export class AssignmentService {
             // Check if there are any assignments that would conflict with this indefinite assignment
             overlappingAssignments = await this.assignmentRepository.find({
                 where: [
-                    // Case 1: Any existing assignment that starts after this one's start date
+                    // Scenario: Ongoing new assignment overlaps with future existing assignments
+                    // Example: New(May 1 - null), Existing(May 15 - Jun 30) - New ongoing assignment includes future assignment
                     {
                         ...whereConditions,
-                        dateFrom: MoreThanOrEqual(assignment.dateFrom),
+                        dateFrom: MoreThanOrEqual(assignment.dateFrom), // Existing assignment starts on or after new assignment starts
                     },
-                    // Case 2: Any existing assignment that ends after this one's start date
+
+                    // Scenario: Ongoing new assignment overlaps with existing assignment that ends in the future
+                    // Example: New(May 1 - null), Existing(Apr 15 - May 15) - New ongoing assignment overlaps with an assignment ending later
                     {
                         ...whereConditions,
-                        dateTo: MoreThanOrEqual(assignment.dateFrom),
+                        dateTo: MoreThanOrEqual(assignment.dateFrom), // Existing assignment ends on or after new assignment starts
                     },
-                    // Case 3: Any existing ongoing assignment (null end date)
+
+                    // Scenario: Both new and existing assignments are ongoing
+                    // Example: New(May 1 - null), Existing(Apr 15 - null) - Two ongoing assignments would overlap indefinitely
                     {
                         ...whereConditions,
-                        dateTo: IsNull(),
+                        dateTo: IsNull(), // Existing assignment has no end date (ongoing)
                     }
                 ]
             });
